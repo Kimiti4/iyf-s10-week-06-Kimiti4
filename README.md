@@ -1,5 +1,5 @@
 # iyf-s10-week-06-Kimiti4
-# Week 5: DOM Manipulation
+# Week 6: Asynchronous JavaScript
 
 ## Author
 - **Name:** Amos Kimiti
