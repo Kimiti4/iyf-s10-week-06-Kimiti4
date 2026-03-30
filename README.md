@@ -2,7 +2,7 @@
 # Week 5: DOM Manipulation
 
 ## Author
-- **Name:** Your Full Name
+- **Name:** Amos Kimiti
 - **GitHub:** [@Kimiti4](https://github.com/Kimiti4)
 - **Date:** March 30, 2026
 
@@ -47,4 +47,4 @@ A responsive weather dashboard that displays current weather conditions, 5-day f
 ![Weather Dashboard Screenshot](images/Capture1.PNG)
 
 ## Live Demo (if deployed)
-[View Live Demo](https://your-deployed-url.com)
+[Weather Dashboard](https://kimiti4.github.io/iyf-s10-week-06-Kimiti4/)
