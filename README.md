@@ -47,6 +47,16 @@ A responsive weather dashboard that displays current weather conditions, 5-day f
 ![Weather Dashboard Screenshot](images/Capture1.PNG)
 
 ## Live Demo (if deployed)
-[Weather Dashboard](https://kimiti4.github.io/iyf-s10-week-06-Kimiti4/)
+## 🌐 Live Demos
 
-[API DATA DISPLAY](https://github.com/Kimiti4/iyf-s10-week-06-Kimiti4/API-Data.html)
+<p align="center">
+  <a href="https://kimiti4.github.io/iyf-s10-week-06-Kimiti4/" target="_blank" rel="noopener">
+    <img src="https://img.shields.io/badge/🌤️_Weather_Dashboard-3b82f6?style=for-the-badge&logo=cloud&logoColor=white" alt="Weather Dashboard">
+  </a>
+  <a href="https://kimiti4.github.io/iyf-s10-week-06-Kimiti4/API-Data.html" target="_blank" rel="noopener">
+    <img src="https://img.shields.io/badge/👥_API_Data_Display-10b981?style=for-the-badge&logo=database&logoColor=white" alt="API Data Display">
+  </a>
+</p>
+
+> 💡 Click any badge above to open the live demo in a new tab.  
+> 🔄 If you see 404, wait 1-2 minutes for GitHub Pages to deploy.
