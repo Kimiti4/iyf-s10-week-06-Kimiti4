@@ -49,4 +49,4 @@ A responsive weather dashboard that displays current weather conditions, 5-day f
 ## Live Demo (if deployed)
 [Weather Dashboard](https://kimiti4.github.io/iyf-s10-week-06-Kimiti4/)
 
-[API DATA DISPLAY](https://github.com/Kimiti4/iyf-s10-week-06-Kimiti4/blob/main/API-Data.html)
+[API DATA DISPLAY](https://github.com/Kimiti4/iyf-s10-week-06-Kimiti4/API-Data.html)
