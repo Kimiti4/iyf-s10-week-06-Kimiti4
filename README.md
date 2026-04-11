@@ -1,13 +1,13 @@
 # iyf-s10-week-06-Kimiti4
-# Week 01: Weather Dashboard
+# Week 6: Asynchronous JavaScript
 
 ## Author
-- **Name:** Your Full Name
+- **Name:** Amos Kimiti
 - **GitHub:** [@Kimiti4](https://github.com/Kimiti4)
 - **Date:** March 30, 2026
 
 ## Project Description
-A responsive weather dashboard that displays current weather conditions, 5-day forecasts, and 3-hour interval forecasts using the OpenWeather API. The project focuses on API integration, data transformation, and UI structuring for real-world frontend applications.
+A responsive weather dashboard that displays current weather conditions, 5-day forecasts, and 3-hour interval forecasts using the OpenWeather API. The project focuses on API integration, data transformation, and UI structuring for real-world frontend applications. DOM Manipulation codes
 
 ## Technologies Used
 - HTML5
@@ -47,4 +47,4 @@ A responsive weather dashboard that displays current weather conditions, 5-day f
 ![Weather Dashboard Screenshot](images/Capture1.PNG)
 
 ## Live Demo (if deployed)
-[View Live Demo](https://your-deployed-url.com)
+[Weather Dashboard](https://kimiti4.github.io/iyf-s10-week-06-Kimiti4/)
