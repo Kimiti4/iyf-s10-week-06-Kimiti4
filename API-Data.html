@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👥 User Directory</title>
+    <style>
+        /* 🎨 CSS Variables for Theming */
+        :root {
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --success: #10b981;
+            --error: #ef4444;
+            --warning: #f59e0b;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --text-primary: #111827;
+            --text-secondary: #6b7280;
+            --border: #e5e7eb;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: all 0.2s ease;
+        }
+
+        /* 🌙 Dark Mode Support */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-primary: #1f2937;
+                --bg-secondary: #374151;
+                --text-primary: #f9fafb;
+                --text-secondary: #9ca3af;
+                --border: #4b5563;
+            }
+        }
+
+        /* 🧱 Base Reset & Typography */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 1.5rem;
+        }
+
+        /* 📦 Main Container */
+        #app {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--bg-primary);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--primary);
+            font-size: 1.8rem;
+        }
+
+        /* ⚙️ Controls Section */
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border);
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .control-group label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .control-group input,
+        .control-group select {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .control-group input:focus,
+        .control-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .results-count {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+        }
+
+        .reset-btn {
+            padding: 0.6rem 1rem;
+            background: var(--text-secondary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            align-self: flex-end;
+        }
+
+        .reset-btn:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        /* 🔄 Loading & Error States */
+        #loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        #loading::after {
+            content: "";
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 0.5rem;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: var(--error);
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .hidden { display: none !important; }
+
+        /* 🃏 User Cards Grid */
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .user-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.2rem;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .user-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .user-card header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .user-card h3 {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .username {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            background: var(--bg-secondary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 20px;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .user-details p {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .user-details a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .user-details a:hover {
+            text-decoration: underline;
+            color: var(--primary-hover);
+        }
+
+        .view-posts {
+            margin-top: auto;
+            padding: 0.5rem 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .view-posts:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+        }
+
+        .no-results button {
+            margin-top: 1rem;
+            padding: 0.5rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+        }
+
+        /* 📝 Post Form Styles */
+        .post-form {
+            margin-top: 2.5rem;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .post-form h3 {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        .post-form label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .post-form input,
+        .post-form textarea {
+            padding: 0.7rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 80px;
+            transition: var(--transition);
+        }
+
+        .post-form input:focus,
+        .post-form textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .post-form button[type="submit"] {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--success);
+            color: white;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .post-form button[type="submit"]:hover:not(:disabled) {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        .post-form button[type="submit"]:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* 🔔 Alert Notifications */
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius-sm);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .alert-success {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            color: #065f46;
+        }
+
+        .alert-error {
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            color: #991b1b;
+        }
+
+        .alert details {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .alert pre {
+            background: rgba(0,0,0,0.05);
+            padding: 0.75rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        /* 📱 Responsive Adjustments */
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            #app { padding: 1.5rem; }
+            .controls { grid-template-columns: 1fr; }
+            .user-grid { grid-template-columns: 1fr; }
+            h1 { font-size: 1.5rem; }
+        }
+
+        /* ♿ Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* 🎯 Focus Visibility for Keyboard Users */
+        :focus-visible {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h1>👥 User Directory</h1>
+        
+        <!-- Alerts Container -->
+        <div id="alerts"></div>
+        
+        <!-- Loading & Error -->
+        <div id="loading">⏳ Loading users...</div>
+        <div id="error" class="error hidden"></div>
+        
+        <!-- Search/Filter Controls -->
+        <div class="controls">
+            <div class="control-group">
+                <label for="search">🔍 Search:</label>
+                <input type="text" id="search" placeholder="Name, email, or city..." autocomplete="off">
+            </div>
+            <div class="control-group">
+                <label for="sort-order">🔃 Sort by:</label>
+                <select id="sort-order">
+                    <option value="name-asc">Name (A-Z)</option>
+                    <option value="name-desc">Name (Z-A)</option>
+                    <option value="email-asc">Email (A-Z)</option>
+                    <option value="city-asc">City (A-Z)</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="city-filter">🏙️ Filter by city:</label>
+                <select id="city-filter">
+                    <option value="all">All Cities</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <span id="results-count" class="results-count"></span>
+                <button onclick="resetFilters()" class="reset-btn">🔄 Reset</button>
+            </div>
+        </div>
+        
+        <!-- Users Grid -->
+        <div id="users-container" class="user-grid"></div>
+        
+        <!-- Create Post Form -->
+        <form id="post-form" class="post-form">
+            <h3>📝 Create New Post</h3>
+            <label>
+                Title:
+                <input type="text" name="title" required maxlength="100" placeholder="Enter post title">
+            </label>
+            <label>
+                Body:
+                <textarea name="body" required maxlength="500" placeholder="Write your post content..."></textarea>
+            </label>
+            <label>
+                User ID:
+                <input type="number" name="userId" min="1" max="10" value="1">
+            </label>
+            <button type="submit">✨ Create Post</button>
+        </form>
+    </div>
+
+    <script>
+        // ✅ DOM Elements (consistent naming)
+        const loading = document.getElementById("loading");
+        const errorDiv = document.getElementById("error");
+        const container = document.getElementById("users-container");
+        const alertsContainer = document.getElementById("alerts");
+        
+        // ✅ State
+        let allUsers = [];
+        let currentSort = { field: "name", direction: "asc" };
+        let currentCityFilter = "all";
+
+        // ✅ Utility: Show/Hide Loading
+        function showLoading() {
+            loading.classList.remove("hidden");
+            container.innerHTML = "";
+            errorDiv.classList.add("hidden");
+        }
+
+        function hideLoading() {
+            loading.classList.add("hidden");
+        }
+
+        // ✅ Utility: Show Error
+        function showError(message) {
+            errorDiv.textContent = `❌ ${message}`;
+            errorDiv.classList.remove("hidden");
+            hideLoading();
+        }
+
+        // ✅ Utility: Show Alert Notifications
+        function showAlert(message, type = 'success', details = null) {
+            const alert = document.createElement("div");
+            alert.className = `alert alert-${type}`;
+            alert.innerHTML = `
+                <span>${message}</span>
+                ${details ? `<details><summary>📋 Details</summary><pre>${JSON.stringify(details, null, 2)}</pre></details>` : ''}
+            `;
+            alertsContainer.prepend(alert);
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-10px)';
+                setTimeout(() => alert.remove(), 300);
+            }, 5000);
+        }
+
+        // ✅ Unified Render Function
+        function renderUsers(users) {
+            if (users.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        🔍 No users match your filters
+                        <button onclick="resetFilters()">Clear Filters</button>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = users.map(user => `
+                <article class="user-card">
+                    <header>
+                        <h3>👤 ${user.name}</h3>
+                        <span class="username">@${user.username}</span>
+                    </header>
+                    <div class="user-details">
+                        <p>📧 <a href="mailto:${user.email}">${user.email}</a></p>
+                        <p>🏢 ${user.company.name}</p>
+                        <p>📍 ${user.address.city}, ${user.address.street}</p>
+                        <p>📞 ${user.phone}</p>
+                    </div>
+                    <button class="view-posts" data-user-id="${user.id}">
+                        View Posts →
+                    </button>
+                </article>
+            `).join("");
+            
+            // Attach event listeners to dynamic buttons
+            document.querySelectorAll(".view-posts").forEach(btn => {
+                btn.addEventListener("click", (e) => {
+                    const userId = e.currentTarget.dataset.userId;
+                    viewUserPosts(userId);
+                });
+            });
+        }
+
+        // ✅ Fetch Users from API
+        async function loadUsersFromAPI() {
+            const response = await fetch("https://jsonplaceholder.typicode.com/users");
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            return response.json();
+        }
+
+        // ✅ Main Load Function
+        async function loadUsers() {
+            showLoading();
+            try {
+                allUsers = await loadUsersFromAPI();
+                populateCityFilter(allUsers);
+                renderUsers(allUsers);
+                updateResultsCount(allUsers.length);
+            } catch (error) {
+                console.error("💥 Load failed:", error);
+                showError("Failed to load users. Please refresh the page.");
+                showAlert("Could not connect to API", "error");
+            } finally {
+                hideLoading();
+            }
+        }
+
+        // ✅ POST Request: Create Post
+        async function createPost(title, body, userId) {
+            const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title, body, userId })
+            });
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `Failed: ${response.status}`);
+            }
+            return response.json();
+        }
+
+        // ✅ Form Submit Handler
+        async function handlePostFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            try {
+                submitBtn.disabled = true;
+                submitBtn.textContent = "⏳ Posting...";
+                
+                const title = form.title.value.trim();
+                const body = form.body.value.trim();
+                const userId = parseInt(form.userId.value) || 1;
+                
+                if (!title || !body) throw new Error("Title and body required");
+                
+                const newPost = await createPost(title, body, userId);
+                showAlert(`✅ Post created! ID: ${newPost.id}`, "success", newPost);
+                form.reset();
+            } catch (error) {
+                console.error("❌ Post failed:", error);
+                showAlert(`Failed: ${error.message}`, "error");
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            }
+        }
+
+        // ✅ Search/Filter: Debounce
+        function debounce(func, wait) {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        }
+
+        // ✅ Search Handler
+        function handleSearch(event) {
+            const query = event.target.value.toLowerCase().trim();
+            applyFiltersAndRender(query);
+        }
+
+        // ✅ Apply All Filters + Sort + Render
+        function applyFiltersAndRender(searchQuery = "") {
+            let filtered = [...allUsers];
+            
+            // Search
+            if (searchQuery) {
+                filtered = filtered.filter(user => 
+                    user.name.toLowerCase().includes(searchQuery) ||
+                    user.email.toLowerCase().includes(searchQuery) ||
+                    user.address.city.toLowerCase().includes(searchQuery)
+                );
+            }
+            
+            // City Filter
+            if (currentCityFilter !== "all") {
+                filtered = filtered.filter(user => user.address.city === currentCityFilter);
+            }
+            
+            // Sort
+            filtered.sort((a, b) => {
+                const aVal = String(a[currentSort.field] || "").toLowerCase();
+                const bVal = String(b[currentSort.field] || "").toLowerCase();
+                if (aVal < bVal) return currentSort.direction === "asc" ? -1 : 1;
+                if (aVal > bVal) return currentSort.direction === "asc" ? 1 : -1;
+                return 0;
+            });
+            
+            renderUsers(filtered);
+            updateResultsCount(filtered.length);
+        }
+
+        // ✅ Update Results Counter
+        function updateResultsCount(count) {
+            const counter = document.getElementById("results-count");
+            if (counter) counter.textContent = `Showing ${count} of ${allUsers.length} users`;
+        }
+
+        // ✅ Reset Filters
+        function resetFilters() {
+            document.getElementById("search").value = "";
+            document.getElementById("sort-order").value = "name-asc";
+            document.getElementById("city-filter").value = "all";
+            currentSort = { field: "name", direction: "asc" };
+            currentCityFilter = "all";
+            renderUsers(allUsers);
+            updateResultsCount(allUsers.length);
+        }
+        window.resetFilters = resetFilters; // Global access
+
+        // ✅ Populate City Dropdown
+        function populateCityFilter(users) {
+            const cities = [...new Set(users.map(u => u.address.city))].sort();
+            const select = document.getElementById("city-filter");
+            if (!select) return;
+            select.innerHTML = `<option value="all">All Cities</option>` + 
+                cities.map(city => `<option value="${city}">${city}</option>`).join("");
+        }
+
+        // ✅ View Posts for User (Bonus)
+        async function viewUserPosts(userId) {
+            try {
+                const response = await fetch(`https://jsonplaceholder.typicode.com/posts?userId=${userId}`);
+                const posts = await response.json();
+                const user = allUsers.find(u => u.id == userId);
+                showAlert(
+                    `📝 ${user?.name || 'User'} has ${posts.length} posts`,
+                    "success",
+                    posts.slice(0, 3).map(p => ({ title: p.title, id: p.id }))
+                );
+            } catch (error) {
+                showAlert("Could not load posts", "error");
+            }
+        }
+
+        // ✅ Setup Event Listeners
+        function setupEventListeners() {
+            // Search with debounce
+            const searchInput = document.getElementById("search");
+            searchInput?.addEventListener("input", debounce(handleSearch, 300));
+            
+            // Sort
+            document.getElementById("sort-order")?.addEventListener("change", (e) => {
+                const [field, direction] = e.target.value.split("-");
+                currentSort = { field, direction };
+                applyFiltersAndRender();
+            });
+            
+            // City Filter
+            document.getElementById("city-filter")?.addEventListener("change", (e) => {
+                currentCityFilter = e.target.value;
+                applyFiltersAndRender();
+            });
+            
+            // Post Form
+            document.getElementById("post-form")?.addEventListener("submit", handlePostFormSubmit);
+        }
+
+        // ✅ Initialize App (Single Entry Point)
+        document.addEventListener("DOMContentLoaded", async () => {
+            setupEventListeners();
+            await loadUsers();
+        });
+    </script>
+</body>
+</html>
