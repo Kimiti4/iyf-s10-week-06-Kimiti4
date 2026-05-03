@@ -132,7 +132,7 @@ function fetchUserDataFlow(userId) {
         })
         .then(comments => {
             console.log("💬 Comments:", comments);
-            return { user: getUserData(userId), posts, comments };
+            return getUserData(userId).then(user => ({ user, posts, comments }));
         })
         .catch(error => {
             console.error("🚨 Chain failed:", error);

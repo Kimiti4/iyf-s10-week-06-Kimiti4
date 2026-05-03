@@ -261,7 +261,11 @@ async function loadWeather(city) {
         saveHistory(city);
 
     } catch (err) {
-        showError("Failed to load weather data");
+        if (err.message.includes("404") || err.message.includes("not found")) {
+            showError("City not found. Please try again.");
+        } else {
+            showError("Failed to load weather data. Check your connection.");
+        }
         console.error(err);
     } finally {
         hideLoading();
